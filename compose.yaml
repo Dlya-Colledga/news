@@ -1,0 +1,194 @@
+# One-command local installation: docker compose up --build -d
+# Website: http://localhost:8000 · Admin username: admin (or ADMIN_USERNAME)
+# Read the generated admin password: docker compose exec web cat /run/frame/admin-password
+# Requires Docker Compose >= 2.20 (inline Dockerfile and optional dependencies).
+# Optional overrides: WEB_PORT, POSTGRES_PORT, POSTGRES_PASSWORD, ADMIN_USERNAME,
+# ADMIN_PASSWORD (12+ characters), BASE_URL, TMDB_API_KEY.
+# Existing .env DATABASE_URL is deliberately replaced with the container DB address.
+
+x-app: &app
+  image: frame-news:local
+  build:
+    context: .
+    dockerfile_inline: |
+      FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+      RUN apt-get update \
+          && apt-get install -y --no-install-recommends libgomp1 \
+          && rm -rf /var/lib/apt/lists/* \
+          && useradd --create-home --uid 10001 frame
+      ENV UV_PROJECT_ENVIRONMENT=/opt/venv \
+          UV_LINK_MODE=copy \
+          PATH="/opt/venv/bin:$$PATH" \
+          PYTHONUNBUFFERED=1 \
+          PYTHONDONTWRITEBYTECODE=1 \
+          ARGOS_PACKAGES_DIR=/models/packages \
+          XDG_DATA_HOME=/models/data \
+          XDG_CACHE_HOME=/models/cache
+      WORKDIR /app
+      COPY pyproject.toml uv.lock README.md ./
+      RUN uv sync --locked --no-dev --extra translation --no-install-project
+      COPY app ./app
+      COPY alembic.ini ./
+      RUN uv sync --locked --no-dev --extra translation \
+          && mkdir -p /run/frame /models/packages /models/data /models/cache \
+          && chown -R frame:frame /run/frame /models
+      USER frame
+  init: true
+  environment: &environment
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-frame}
+    BASE_URL: ${BASE_URL:-http://localhost:8000}
+    ENVIRONMENT: ${ENVIRONMENT:-development}
+    COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    TMDB_API_KEY: ${TMDB_API_KEY:-}
+    INGEST_INTERVAL_MINUTES: ${INGEST_INTERVAL_MINUTES:-15}
+    HTTP_TIMEOUT: ${HTTP_TIMEOUT:-20}
+    REQUEST_INTERVAL_SECONDS: ${REQUEST_INTERVAL_SECONDS:-3}
+    DEDUP_AUTO_THRESHOLD: ${DEDUP_AUTO_THRESHOLD:-93}
+    DEDUP_REVIEW_THRESHOLD: ${DEDUP_REVIEW_THRESHOLD:-76}
+    DEDUP_WINDOW_DAYS: ${DEDUP_WINDOW_DAYS:-7}
+  volumes:
+    - runtime_state:/run/frame:ro
+    - translation_models:/models
+  entrypoint:
+    - python
+    - -c
+    - |
+      import os, sys
+      from pathlib import Path
+      from sqlalchemy.engine import URL
+      os.environ['DATABASE_URL'] = URL.create(
+          'postgresql+psycopg', username='frame', password=os.environ['POSTGRES_PASSWORD'],
+          host='db', port=5432, database='frame'
+      ).render_as_string(hide_password=False)
+      os.environ['SECRET_KEY'] = Path('/run/frame/secret-key').read_text().strip()
+      os.execvp(sys.argv[1], sys.argv[1:])
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: frame
+      POSTGRES_USER: frame
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-frame}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U frame -d frame"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    stop_grace_period: 30s
+
+  setup:
+    <<: *app
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      <<: *environment
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    volumes:
+      - runtime_state:/run/frame
+      - translation_models:/models
+    entrypoint: ["python", "-c"]
+    command:
+      - |
+        import os, secrets, subprocess
+        from pathlib import Path
+        from sqlalchemy.engine import URL
+        os.environ['DATABASE_URL'] = URL.create(
+            'postgresql+psycopg', username='frame', password=os.environ['POSTGRES_PASSWORD'],
+            host='db', port=5432, database='frame'
+        ).render_as_string(hide_password=False)
+        secret = Path('/run/frame/secret-key')
+        if not secret.exists():
+            secret.write_text(secrets.token_urlsafe(48))
+            secret.chmod(0o600)
+        os.environ['SECRET_KEY'] = secret.read_text().strip()
+        subprocess.run(['alembic', 'upgrade', 'head'], check=True)
+        subprocess.run(['news', 'seed'], check=True)
+        from sqlalchemy import select
+        from app.db.session import SessionLocal
+        from app.db.models import User
+        from app.core.security import hasher
+        with SessionLocal() as db:
+            username = os.environ['ADMIN_USERNAME']
+            if not username or len(username) > 120:
+                raise ValueError('ADMIN_USERNAME must contain 1–120 characters')
+            if not db.scalar(select(User).where(User.username == username)):
+                password_file = Path('/run/frame/admin-password')
+                password = os.environ['ADMIN_PASSWORD'] or (
+                    password_file.read_text().strip() if password_file.exists()
+                    else secrets.token_urlsafe(24)
+                )
+                if len(password) < 12:
+                    raise ValueError('ADMIN_PASSWORD must contain at least 12 characters')
+                password_file.write_text(password + '\n')
+                password_file.chmod(0o600)
+                db.add(User(username=username, password_hash=hasher.hash(password), role='admin'))
+                db.commit()
+                print('Administrator created. Password is in /run/frame/admin-password.', flush=True)
+        print('Database and newsroom are ready.', flush=True)
+
+  models:
+    <<: *app
+    restart: "no"
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    command:
+      - python
+      - -c
+      - |
+        import subprocess
+        import argostranslate.package as package
+        installed = {(p.from_code, p.to_code) for p in package.get_installed_packages()}
+        required = [('en', 'ru'), ('en', 'ky'), ('ru', 'en'), ('ky', 'en')]
+        missing = [a + ':' + b for a, b in required if (a, b) not in installed]
+        if missing:
+            raise SystemExit(subprocess.call(['news', 'models', 'install', *missing]))
+        print('All four translation models are already installed.', flush=True)
+
+  web:
+    <<: *app
+    restart: unless-stopped
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8000}:8000"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=5)"]
+      interval: 15s
+      timeout: 6s
+      retries: 5
+      start_period: 20s
+
+  worker:
+    <<: *app
+    restart: unless-stopped
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+      # A failed download stays visible as an exited models container. The worker
+      # can still collect RSS and report missing_model; no fake translation fallback.
+      models:
+        condition: service_completed_successfully
+        required: false
+    command: ["news", "worker"]
+    stop_grace_period: 30s
+
+volumes:
+  postgres_data:
+  runtime_state:
+  translation_models:

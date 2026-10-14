@@ -1,0 +1,13 @@
+{
+  "revision": "91d7a2bc410e",
+  "backup": ".local/backups/before-html-moderation-20261014T040021Z.dump",
+  "row_counts_preserved": {
+    "news_events": 25,
+    "source_articles": 25,
+    "news_translations": 75
+  },
+  "states_after_migration": {
+    "DISCOVERED": 25
+  },
+  "synthetic_content_added": false
+}

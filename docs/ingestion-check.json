@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-10-13T15:16:55.200179+00:00",
+  "articles": 25,
+  "events": 25,
+  "published": 0,
+  "runs": [
+    {
+      "id": 1,
+      "source_id": 3,
+      "status": "failed",
+      "imported": 0,
+      "skipped": 0,
+      "finished_at": "2026-10-13T14:56:13.851458+00:00",
+      "error": "Error -3 while decompressing data: incorrect header check"
+    },
+    {
+      "id": 2,
+      "source_id": 3,
+      "status": "success",
+      "imported": 25,
+      "skipped": 0,
+      "finished_at": "2026-10-13T14:57:53.727653+00:00",
+      "error": null
+    },
+    {
+      "id": 3,
+      "source_id": 3,
+      "status": "unchanged",
+      "imported": 0,
+      "skipped": 0,
+      "finished_at": "2026-10-13T15:02:19.445130+00:00",
+      "error": null
+    }
+  ]
+}

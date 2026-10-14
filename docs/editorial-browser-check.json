@@ -1,0 +1,68 @@
+{
+  "login_edit_publish_unpublish": "pass",
+  "checks": [
+    {
+      "viewport": "desktop",
+      "locale": "en",
+      "article": "pass",
+      "language_switch": "pass",
+      "no_js": true
+    },
+    {
+      "viewport": "desktop",
+      "locale": "ru",
+      "article": "pass",
+      "language_switch": "pass",
+      "no_js": true
+    },
+    {
+      "viewport": "desktop",
+      "locale": "ky",
+      "article": "pass",
+      "language_switch": "pass",
+      "no_js": true
+    },
+    {
+      "viewport": "tablet",
+      "locale": "en",
+      "article": "pass",
+      "language_switch": "pass",
+      "no_js": true
+    },
+    {
+      "viewport": "tablet",
+      "locale": "ru",
+      "article": "pass",
+      "language_switch": "pass",
+      "no_js": true
+    },
+    {
+      "viewport": "tablet",
+      "locale": "ky",
+      "article": "pass",
+      "language_switch": "pass",
+      "no_js": true
+    },
+    {
+      "viewport": "mobile",
+      "locale": "en",
+      "article": "pass",
+      "language_switch": "pass",
+      "no_js": true
+    },
+    {
+      "viewport": "mobile",
+      "locale": "ru",
+      "article": "pass",
+      "language_switch": "pass",
+      "no_js": true
+    },
+    {
+      "viewport": "mobile",
+      "locale": "ky",
+      "article": "pass",
+      "language_switch": "pass",
+      "no_js": true
+    }
+  ]
+}

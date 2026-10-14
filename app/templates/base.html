@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} — FRAME</title><meta name="description" content="{{ description }}">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg"><link rel="stylesheet" href="/static/style.css">
+  <link rel="canonical" href="{{ canonical }}">
+  {% for code, path in alternates.items() %}<link rel="alternate" hreflang="{{ code }}" href="{{ base_url }}{{ path }}">{% endfor %}
+  {% if noindex %}<meta name="robots" content="noindex,follow">{% endif %}
+  <meta property="og:title" content="{{ title }}"><meta property="og:description" content="{{ description }}">
+  <meta property="og:type" content="{{ og_type|default('website') }}"><meta property="og:url" content="{{ canonical }}"><meta property="og:site_name" content="FRAME">
+  {% if event is defined and event.image_url %}<meta property="og:image" content="{{ event.image_url }}">{% else %}<meta property="og:image" content="{{ base_url }}/static/editorial.svg">{% endif %}
+</head>
+<body>
+<a href="#main" class="skip-link">{{ ui.skip }}</a>
+<header class="site-header">
+  <div class="header-top wrap"><a class="wordmark" href="/{{ lang }}/" aria-label="Frame — {{ ui.home }}">FR<span class="brand-a">A</span>ME<span class="brand-dot">.</span></a><span class="edition">{{ ui.edition }}</span>
+    <div class="header-actions"><a class="search-link" href="/{{ lang }}/search/" aria-label="{{ ui.search }}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 5 5"/></svg><span>{{ ui.search }}</span></a>
+    <nav class="languages" aria-label="{{ ui.language }}">{% for code in languages %}<a href="{{ switch_links[code] }}" lang="{{ code }}" {% if code==lang %}aria-current="page"{% endif %}>{{ code|upper }}</a>{% endfor %}</nav></div>
+  </div>
+  <nav class="category-nav wrap" aria-label="{{ ui.sections }}"><a href="/{{ lang }}/" {% if request.url.path=='/'~lang~'/' %}aria-current="page"{% endif %}>{{ ui.home }}</a>{% for cat in category_slugs %}<a href="/{{ lang }}/{{ cat }}/" {% if category is defined and category==cat %}aria-current="page"{% endif %}>{{ ui[cat] }}</a>{% endfor %}<span class="nav-caption">CINEMA · CULTURE · CONTEXT</span></nav>
+</header>
+<main id="main" class="wrap">{% block content %}{% endblock %}</main>
+<footer class="site-footer"><div class="wrap footer-grid"><div><a class="wordmark" href="/{{ lang }}/">FRAME<span class="brand-dot">.</span></a><p>{{ ui.footer_note }}</p></div><p class="footer-about">{{ ui.about_text }}</p><a class="newsroom-link" href="/admin/">{{ ui.admin }} ↗</a></div><div class="wrap footer-bottom"><span>FRAME / EN · RU · KY</span><span>{{ ui.tagline }}</span></div></footer>
+</body></html>

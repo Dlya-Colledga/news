@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel><title>Test fixture · never public news</title><link>https://animecorner.me/</link><description>Offline fixture</description><language>en-US</language>
+<item><guid>test-001</guid><title>Fixture Anime Film Announces Release Date</title><link>https://animecorner.me/fixture-film/?utm_source=test</link><description>&lt;p&gt;A fixture description. &lt;script&gt;alert(1)&lt;/script&gt;&lt;/p&gt;</description><pubDate>Tue, 13 Oct 2026 10:00:00 GMT</pubDate><category>Anime</category></item>
+<item><guid>test-002</guid><title>Fixture Series Season 2 Trailer</title><link>https://animecorner.me/fixture-series/</link><description>Offline test only.</description><pubDate>Tue, 13 Oct 2026 11:00:00 GMT</pubDate></item>
+</channel></rss>

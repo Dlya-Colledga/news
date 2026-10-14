@@ -1,0 +1,15 @@
+{
+  "synthetic_fixture": true,
+  "network": "external requests fulfilled locally",
+  "checks": [
+    "en SSR preview: paragraphs, pictures, figures, table, four embeds",
+    "ru SSR preview: paragraphs, pictures, figures, table, four embeds",
+    "ky SSR preview: paragraphs, pictures, figures, table, four embeds",
+    "No publication before approval",
+    "Rich editor preserves embeds on save",
+    "Administrator approval publishes all locales",
+    "Mobile layout has no horizontal overflow",
+    "Sandboxed iframe components load offline provider fixtures"
+  ],
+  "javascript_errors": []
+}

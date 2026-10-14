@@ -1,0 +1,124 @@
+{
+  "checked_at": "2026-10-13T14:30:12.169807+00:00",
+  "results": [
+    {
+      "url": "https://variety.com/feed/",
+      "status": 200,
+      "final_url": "https://variety.com/feed/",
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "entries": 10,
+      "bozo": false,
+      "language": "en-US"
+    },
+    {
+      "url": "https://deadline.com/feed/",
+      "status": 200,
+      "final_url": "https://deadline.com/feed/",
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "entries": 12,
+      "bozo": false,
+      "language": "en-US"
+    },
+    {
+      "url": "https://animecorner.me/feed/",
+      "status": 200,
+      "final_url": "https://animecorner.me/feed/",
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "entries": 25,
+      "bozo": false,
+      "language": "en-US"
+    },
+    {
+      "url": "https://www.dramabeans.com/feed/",
+      "status": 200,
+      "final_url": "https://dramabeans.com/feed/",
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "entries": 7,
+      "bozo": false,
+      "language": "en-US"
+    },
+    {
+      "url": "https://variety.com/robots.txt",
+      "status": 200,
+      "final_url": "https://variety.com/robots.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "excerpt": "Sitemap: https://variety.com/sitemap_index.xml\nSitemap: https://variety.com/news-sitemap.xml\nUser-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nDisallow: /?s=\nDisallow: /*/?s=\nDisallow: /search/\nDisallow: /search?\nDisallow: *?v02\nDisallow: *?replytocom\nDisallow: /genre/\nDisallow: /genre/*\nDisallow: /*preview=true\nDisallow: /*theme_preview=true\n\nUser-agent: anthropic-ai\nDisallow: /\n\nUser-agent: cohere-ai\nDisallow: /\n\nUser-agent: omgili\nDisallow: /\n\nUser-agent: omgilibot\nDisallow: "
+    },
+    {
+      "url": "https://deadline.com/robots.txt",
+      "status": 200,
+      "final_url": "https://deadline.com/robots.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "excerpt": "Sitemap: https://deadline.com/sitemap_index.xml\nSitemap: https://deadline.com/news-sitemap.xml\nUser-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nDisallow: /?s=\nDisallow: /*/?s=\nDisallow: /search/\nDisallow: /search?\nDisallow: *?v02\nDisallow: *?replytocom\nDisallow: /genre/\nDisallow: /genre/*\nDisallow: /*preview=true\nDisallow: /*theme_preview=true\n\nUser-agent: anthropic-ai\nDisallow: /\n\nUser-agent: cohere-ai\nDisallow: /\n\nUser-agent: omgili\nDisallow: /\n\nUser-agent: omgilibot\nDisallow"
+    },
+    {
+      "url": "https://animecorner.me/robots.txt",
+      "status": 200,
+      "final_url": "https://animecorner.me/robots.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "excerpt": "User-agent: *\nDisallow: /wp/wp-admin/\nAllow: /wp/wp-admin/admin-ajax.php\nSitemap: https://animecorner.me/news-sitemap.xml\n\n# START YOAST BLOCK\n# ---------------------------\nUser-agent: *\nDisallow:\n\nSitemap: https://animecorner.me/sitemap_index.xml\n# ---------------------------\n# END YOAST BLOCK"
+    },
+    {
+      "url": "https://www.dramabeans.com/robots.txt",
+      "status": 200,
+      "final_url": "https://www.dramabeans.com/robots.txt",
+      "content_type": "text/plain; charset=UTF-8",
+      "excerpt": "# ======Raptive Begin======\n\t\t\nUser-agent: ChatGPT-User\nDisallow: /\n\t\t\t\nUser-agent: GPTBot\nDisallow: /\n\t\t\t\nUser-agent: anthropic-ai\nDisallow: /\n\t\t\t\nUser-agent: Claude-Web\nDisallow: /\t\t\n\t\t\t\nUser-agent: PiplBot\nDisallow: /\t\t\n\t\t\t\nUser-agent: CCbot\nDisallow: /\t\t\n\t\t\t\nUser-agent: FacebookBot\nDisallow: /\t\t\n\t\t\t\n# ======Raptive End======\n\t\t\n# START YOAST BLOCK\n# ---------------------------\nUser-agent: *\nDisallow: /comments/\n\nSitemap: https://dramabeans.com/sitemap_index.xml\n# ---------------------------\n"
+    },
+    {
+      "url": "https://www.dramabeans.com/terms-of-use/",
+      "status": 404,
+      "final_url": "https://dramabeans.com/terms-of-use/",
+      "content_type": "text/html; charset=UTF-8",
+      "excerpt": ""
+    },
+    {
+      "url": "https://animecorner.me/terms-and-conditions/",
+      "status": 404,
+      "final_url": "https://animecorner.me/terms-and-conditions/",
+      "content_type": "text/html; charset=UTF-8",
+      "excerpt": ""
+    }
+  ],
+  "argos": {
+    "catalog_packages": 100,
+    "en_ru": [
+      {
+        "from": "en",
+        "to": "ru",
+        "version": "1.9"
+      },
+      {
+        "from": "ru",
+        "to": "en",
+        "version": "1.9"
+      }
+    ],
+    "ky": [
+      {
+        "package_version": "1.4",
+        "argos_version": "1.9",
+        "from_code": "en",
+        "from_name": "English",
+        "to_code": "ky",
+        "to_name": "Kyrgyz",
+        "links": [
+          "https://argos-net.com/v1/translate-en_ky-1_4.argosmodel"
+        ],
+        "code": "translate-en_ky"
+      },
+      {
+        "package_version": "1.4",
+        "argos_version": "1.9",
+        "from_code": "ky",
+        "from_name": "Kyrgyz",
+        "to_code": "en",
+        "to_name": "English",
+        "links": [
+          "https://argos-net.com/v1/translate-ky_en-1_4.argosmodel"
+        ],
+        "code": "translate-ky_en"
+      }
+    ]
+  }
+}

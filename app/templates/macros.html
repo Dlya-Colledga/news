@@ -1,0 +1,8 @@
+{% macro card(event, lang, ui, local, event_url, featured=false) %}
+{% set t = local(event, lang) %}{% if t %}
+<article class="story-card {% if featured %}featured-card{% endif %}">
+<a class="card-art" href="{{ event_url(event, lang) }}" tabindex="-1" aria-hidden="true"><img src="{{ event.image_url or '/static/editorial.svg' }}" alt="" loading="lazy" width="900" height="600"><span class="art-label">{{ ui[event.event_type] }}</span><span class="art-arrow">↗</span></a>
+<div class="card-content"><div class="eyebrow">{% for cat in event.categories[:2] %}<a href="/{{ lang }}/{{ cat.slug }}/">{{ ui[cat.slug] }}</a>{% if not loop.last %}<span> / </span>{% endif %}{% endfor %}</div><h3><a href="{{ event_url(event, lang) }}">{{ t.title }}</a></h3><p>{{ t.summary }}</p><div class="story-meta"><time datetime="{{ event.published_at.isoformat() }}">{{ event.published_at.strftime('%d.%m.%Y') }}</time><span>{{ event.articles|length }} {{ ui.source_count }}</span></div></div>
+</article>{% endif %}
+{% endmacro %}
+{% macro pagination(page, pages, page_url, ui) %}{% if pages>1 %}<nav class="pagination" aria-label="{{ ui.page }}">{% if page>1 %}<a href="{{ page_url(page-1) }}">← {{ ui.previous }}</a>{% endif %}<span>{{ ui.page }} {{ page }} {{ ui.of }} {{ pages }}</span>{% if page<pages %}<a href="{{ page_url(page+1) }}">{{ ui.next }} →</a>{% endif %}</nav>{% endif %}{% endmacro %}

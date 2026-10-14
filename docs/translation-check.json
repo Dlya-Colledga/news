@@ -1,0 +1,39 @@
+{
+  "installed_pairs": [
+    [
+      "en",
+      "ru"
+    ],
+    [
+      "en",
+      "ky"
+    ],
+    [
+      "ru",
+      "en"
+    ],
+    [
+      "ky",
+      "en"
+    ]
+  ],
+  "translations": {
+    "ru": {
+      "title": "Кинофестиваль открывается в пятницу",
+      "summary": "На фестивале покажут фильмы из разных стран.",
+      "body": "Программа фестиваля Кинофестиваль открывается на Пятница . Официальный плакат",
+      "content_html": "<h2>Программа фестиваля</h2><p>Кинофестиваль открывается на <strong>Пятница</strong>.</p><figure><img alt=\"Фестивальный плакат\" loading=\"lazy\" src=\"https://example.com/poster.jpg\"><figcaption>Официальный плакат</figcaption></figure><iframe allow=\"fullscreen; picture-in-picture\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\" sandbox=\"allow-scripts allow-same-origin allow-presentation\" src=\"https://www.youtube-nocookie.com/embed/VIDEO_ID123\" title=\"Встроенные медиа\"></iframe>",
+      "dom_preserved": true,
+      "engine": "argos:en→ru"
+    },
+    "ky": {
+      "title": "Кинофестивал жума күнү башталат",
+      "summary": "Фестивалда ар кайсы өлкөлөрдөн келген тасмалар көрсөтүлөт.",
+      "body": "Фестивалдын программасы Кинофестивалдын башталышы Жума жума күнү .... Расмий плакат",
+      "content_html": "<h2>Фестивалдын программасы</h2><p>Кинофестивалдын башталышы <strong>Жума жума күнү</strong>....</p><figure><img alt=\"Фестивалдын плакаттары\" loading=\"lazy\" src=\"https://example.com/poster.jpg\"><figcaption>Расмий плакат</figcaption></figure><iframe allow=\"fullscreen; picture-in-picture\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\" sandbox=\"allow-scripts allow-same-origin allow-presentation\" src=\"https://www.youtube-nocookie.com/embed/VIDEO_ID123\" title=\"Кошумча маалымат каражаттары\"></iframe>",
+      "dom_preserved": true,
+      "engine": "argos:en→ky"
+    }
+  },
+  "persistence": true
+}

@@ -1,0 +1,7 @@
+{
+  "postgresql": true,
+  "legacy_text_preserved": true,
+  "legacy_html_escaped": true,
+  "legacy_approval_reset": true,
+  "upgrade_check_downgrade_upgrade_check": "passed"
+}
