@@ -1,5 +1,5 @@
 [project]
-name = "news"
+name = "frame"
 version = "0.1.0"
 description = "Frame — multilingual cinema newsroom and RSS aggregator"
 readme = "README.md"
