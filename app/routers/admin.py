@@ -176,6 +176,8 @@ def toggle_source(request: Request, source_id: int, db=Depends(get_db), form=Dep
     source = db.get(Source, source_id)
     if not source:
         raise HTTPException(404)
+    if not source.enabled and source.access_status == "permission_required":
+        raise HTTPException(422, "Publisher permission is required before collection can be enabled")
     source.enabled = not source.enabled
     audit(db, user.id, "toggle_source", source_id=source.id, enabled=source.enabled)
     db.commit()

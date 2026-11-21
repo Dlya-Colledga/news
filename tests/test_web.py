@@ -196,6 +196,18 @@ def test_publish_requires_review_and_role(client, admin, published, db):
     assert client.post("/admin/sources/1/toggle", data={"csrf": token}).status_code == 403
 
 
+def test_restricted_publisher_cannot_be_enabled_without_permission(client, admin, db):
+    from app.db.models import Source
+
+    token = login(client)
+    source = db.scalar(select(Source).where(Source.key == "variety"))
+    assert source.access_status == "permission_required" and not source.enabled
+    response = client.post(f"/admin/sources/{source.id}/toggle", data={"csrf": token})
+    assert response.status_code == 422
+    db.refresh(source)
+    assert not source.enabled and source.access_status == "permission_required"
+
+
 def test_approve_all_publishes_only_ready_items(client, admin, published, db):
     token = login(client)
     published.status = "READY_FOR_REVIEW"
