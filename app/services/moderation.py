@@ -1,6 +1,6 @@
 """Publication readiness shared by workers, editor actions and approval gates."""
 
-from app.services.article_html import validate_html, content_text, dom, safe_url
+from app.services.article_html import validate_html, content_text, dom
 
 STATUSES = (
     "DISCOVERED",
@@ -29,14 +29,8 @@ def readiness_errors(event):
                     allowed_media.update(c.strip().split()[0] for c in asset.srcset.split(",") if c.strip())
         if article.source.allow_embeds:
             allowed_embeds.update(e.embed_url for e in article.embeds if e.permitted and e.embed_url)
-    covers = {
-        article.featured_image
-        for article in event.articles
-        if safe_url(article.featured_image)
-        and any(asset.kind == "img" and asset.url == article.featured_image for asset in article.assets)
-    }
-    if event.image_url and event.image_url not in allowed_media | covers:
-        errors.append("Featured image is not a verified source image")
+    if event.image_url and event.image_url not in allowed_media:
+        errors.append("Featured image is not a permitted source image")
     for language in ("en", "ru", "ky"):
         translation = next((t for t in event.translations if t.language == language), None)
         if not translation or translation.status != "ready":

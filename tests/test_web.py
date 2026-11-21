@@ -262,6 +262,14 @@ def test_filter_switch_preserves_context(client):
     assert "/ky/movies/?event_type=trailer&amp;sort=oldest" in response.text
 
 
+def test_default_secrets_are_distinct(monkeypatch):
+    from app.core.config import Settings
+
+    monkeypatch.delenv("SECRET_KEY", raising=False)
+    a, b = Settings(_env_file=None), Settings(_env_file=None)
+    assert a.secret_key != b.secret_key and len(a.secret_key) >= 32
+
+
 def test_production_security_config():
     import pytest
     from app.core.config import Settings

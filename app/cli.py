@@ -68,6 +68,8 @@ def main():
     parser = argparse.ArgumentParser(prog="news", description="Frame newsroom management")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("seed", help="Create source configuration and category taxonomy; no news fixtures")
+    demo = sub.add_parser("seed-demo", help="Insert clearly fictional classroom examples (development only)")
+    demo.add_argument("--admin", default="admin", help="Existing administrator username")
     user = sub.add_parser("create-user", help="Create an editor/admin with an interactive password prompt")
     user.add_argument("username")
     user.add_argument("--role", choices=["admin", "editor"], default="admin")
@@ -93,6 +95,17 @@ def main():
         with SessionLocal() as db:
             seed(db)
         print("Sources and categories initialized. No news content was fabricated.")
+    elif args.command == "seed-demo":
+        from app.db.demo import seed_demo
+
+        with SessionLocal() as db:
+            admin = db.scalar(select(User).where(User.username == args.admin))
+            try:
+                count = seed_demo(db, admin)
+            except ValueError as exc:
+                parser.error(str(exc))
+            db.commit()
+        print(f"Added {count} clearly fictional classroom articles; existing examples unchanged.")
     elif args.command == "create-user":
         password = getpass.getpass("Password (at least 12 characters): ")
         if len(password) < 12 or password != getpass.getpass("Repeat password: "):

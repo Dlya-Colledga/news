@@ -1,4 +1,5 @@
 from functools import lru_cache
+import secrets
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, model_validator
 
@@ -6,7 +7,7 @@ from pydantic import Field, model_validator
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
     database_url: str = "postgresql+psycopg://frame:frame@localhost:5432/frame"
-    secret_key: str = "development-only-change-this-secret-key"
+    secret_key: str = Field(default_factory=lambda: secrets.token_urlsafe(48))
     base_url: str = "http://localhost:8000"
     environment: str = "development"
     cookie_secure: bool = False
@@ -27,7 +28,8 @@ class Settings(BaseSettings):
         if self.dedup_review_threshold > self.dedup_auto_threshold:
             raise ValueError("Review threshold must not exceed automatic threshold")
         if self.environment == "production" and (
-            len(self.secret_key) < 32
+            "secret_key" not in self.model_fields_set
+            or len(self.secret_key) < 32
             or self.secret_key.startswith(("development-", "replace-"))
             or not self.cookie_secure
             or not self.base_url.startswith("https://")

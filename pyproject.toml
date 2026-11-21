@@ -2,7 +2,6 @@
 name = "frame"
 version = "0.1.0"
 description = "Frame — multilingual cinema newsroom and RSS aggregator"
-readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "fastapi>=0.115,<1",

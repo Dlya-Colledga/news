@@ -9,7 +9,8 @@
   {% if noindex %}<meta name="robots" content="noindex,follow">{% endif %}
   <meta property="og:title" content="{{ title }}"><meta property="og:description" content="{{ description }}">
   <meta property="og:type" content="{{ og_type|default('website') }}"><meta property="og:url" content="{{ canonical }}"><meta property="og:site_name" content="FRAME">
-  {% if event is defined and event.image_url %}<meta property="og:image" content="{{ event.image_url }}">{% else %}<meta property="og:image" content="{{ base_url }}/static/editorial.svg">{% endif %}
+  {% if event is defined and display_cover(event) %}<meta property="og:image" content="{{ display_cover(event) }}">{% else %}<meta property="og:image" content="{{ base_url }}/static/editorial.svg">{% endif %}
+<script src="/static/image-fallback.js" defer></script>
 </head>
 <body>
 <a href="#main" class="skip-link">{{ ui.skip }}</a>

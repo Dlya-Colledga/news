@@ -31,9 +31,7 @@ def test_worker_jobs_report_failures_and_retry(db, sessions, published, monkeypa
     db.expire_all()
     jobs = db.scalars(select(TranslationJob)).all()
     assert all(j.status == "failed" and j.attempts == 1 for j in jobs)
-    for job in jobs:
-        job.status = "pending"
-    db.commit()
+    # Worker automatically retries once the language route is available.
     monkeypatch.setattr(runner, "TranslationService", lambda: TranslationService(FakeEngine()))
     runner.translate_pending()
     db.expire_all()

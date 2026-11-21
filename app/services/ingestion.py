@@ -242,7 +242,7 @@ class IngestionService:
             article.assets = [ArticleAsset(**a, permitted=source.allow_media) for a in result.assets]
             article.embeds = [ArticleEmbed(**a, permitted=source.allow_embeds) for a in result.embeds]
             if not event.image_url:
-                event.image_url = result.featured_image
+                event.image_url = result.featured_image if source.allow_media else None
                 event.image_credit = next(
                     (a.credit or a.caption for a in article.assets if a.url == event.image_url), None
                 )
@@ -252,7 +252,7 @@ class IngestionService:
                 return
             manual_en = next((t for t in event.translations if t.language == "en" and t.manual_edit), None)
             if manual_en:
-                event.image_url = result.featured_image
+                event.image_url = result.featured_image if source.allow_media else None
                 for t in event.translations:
                     if t.manual_edit:
                         t.content_html = sanitize_html(t.content_html or text_html(t.body))
@@ -359,7 +359,7 @@ class IngestionService:
             en.title, en.summary, en.content_html, en.body = title, summary, html, content_text(html)
             en.status, en.engine, en.error = "ready", "source:" + source.publication_mode, None
             event.canonical_title, event.slug = title, slugify(title)[:220] or "news"
-            event.image_url = result.featured_image
+            event.image_url = result.featured_image if source.allow_media else None
             event.image_credit = next(
                 (a.credit or a.caption for a in article.assets if a.url == event.image_url), None
             )

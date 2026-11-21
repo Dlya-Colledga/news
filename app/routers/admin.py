@@ -177,8 +177,6 @@ def toggle_source(request: Request, source_id: int, db=Depends(get_db), form=Dep
     if not source:
         raise HTTPException(404)
     source.enabled = not source.enabled
-    if source.enabled:
-        source.access_status = "public_access"
     audit(db, user.id, "toggle_source", source_id=source.id, enabled=source.enabled)
     db.commit()
     return redirect("/admin/sources")
@@ -495,6 +493,9 @@ def source_policy(request: Request, source_id: int, db=Depends(get_db), form=Dep
             event.status, event.reviewed = "PROCESSING", False
             event.approved_by, event.approved_at = None, None
             event.editorial_note = "Source rights changed; reprocess this article."
+            for article in event.articles:
+                if article.source_id == source.id and article.scrape_status == "ready":
+                    article.scrape_status = "pending"
     audit(
         db,
         user.id,

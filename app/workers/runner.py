@@ -5,9 +5,9 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import selectinload
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.db.session import SessionLocal, engine, editorial_lock
-from app.db.models import Source, SourceArticle, IngestionRun, TranslationJob, NewsEvent, utcnow
+from app.db.models import Source, SourceArticle, IngestionRun, TranslationJob, NewsTranslation, NewsEvent, utcnow
 from app.services.ingestion import IngestionService, queue_source
-from app.services.translation import TranslationService
+from app.services.translation import TranslationService, MissingModel
 from app.core.config import get_settings
 
 log = logging.getLogger(__name__)
@@ -52,6 +52,32 @@ def schedule_imports():
 
 def translate_pending():
     translator = TranslationService()
+    # A newly installed Argos route can revive an earlier missing-model failure.
+    # Never auto-retry unrelated errors, protected events, or exhausted jobs.
+    with SessionLocal() as db:
+        editorial_lock(db)
+        missing = db.scalars(
+            select(TranslationJob)
+            .join(
+                NewsTranslation,
+                (NewsTranslation.event_id == TranslationJob.event_id)
+                & (NewsTranslation.language == TranslationJob.language),
+            )
+            .join(NewsEvent, NewsEvent.id == TranslationJob.event_id)
+            .where(
+                TranslationJob.status == "failed",
+                TranslationJob.attempts < 5,
+                NewsTranslation.status == "missing_model",
+                ~NewsEvent.status.in_(("REJECTED", "APPROVED", "PUBLISHED")),
+            )
+        ).all()
+        for job in missing:
+            try:
+                translator.engine.path("en", job.language)
+            except MissingModel:
+                continue
+            job.status, job.error, job.updated_at = "pending", None, utcnow()
+        db.commit()
     while True:
         with SessionLocal() as db:
             editorial_lock(db)

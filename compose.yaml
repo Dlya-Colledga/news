@@ -25,7 +25,7 @@ x-app: &app
           XDG_DATA_HOME=/models/data \
           XDG_CACHE_HOME=/models/cache
       WORKDIR /app
-      COPY pyproject.toml uv.lock README.md ./
+      COPY pyproject.toml uv.lock ./
       RUN uv sync --locked --no-dev --extra translation --no-install-project
       COPY app ./app
       COPY alembic.ini ./

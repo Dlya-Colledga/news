@@ -23,6 +23,21 @@ templates.env.filters["article_html"] = lambda value: Markup(sanitize_html(value
 templates.env.filters["text_html"] = text_html
 
 
+def display_cover(event):
+    """Restrict a cover to a publisher image with current, recorded media permission."""
+    if not event.image_url:
+        return None
+    for article in event.articles:
+        if not article.source.allow_media or article.featured_image != event.image_url:
+            continue
+        if any(asset.kind == "img" and asset.url == event.image_url and asset.permitted for asset in article.assets):
+            return event.image_url
+    return None
+
+
+templates.env.globals["display_cover"] = display_cover
+
+
 def local(event, lang):
     return next((t for t in event.translations if t.language == lang and t.status == "ready"), None)
 
@@ -47,6 +62,7 @@ def eager(stmt):
         selectinload(NewsEvent.translations),
         selectinload(NewsEvent.categories),
         selectinload(NewsEvent.articles).selectinload(SourceArticle.source),
+        selectinload(NewsEvent.articles).selectinload(SourceArticle.assets),
         selectinload(NewsEvent.works),
     )
 

@@ -195,7 +195,7 @@ async def test_facts_mode_and_media_rights(db, sessions, configured_source, monk
     assert event.status == "READY_FOR_REVIEW" and "Anime Corner reports" in en.body
     assert "The studio has released" not in en.body
     assert not dom(en.content_html).find(["img", "iframe", "video", "audio"])
-    assert event.image_url == "https://animecorner.me/poster.jpg"
+    assert event.image_url is None
     assert not readiness_errors(event)
     assert all(not asset.permitted for asset in event.articles[0].assets)
     set_publication(db, event.id, True, admin.id)
@@ -433,6 +433,7 @@ async def test_public_articles_need_no_extraction_confirmation(
     assert 'name="allow_extraction"' not in result.text
     db.refresh(configured_source)
     assert configured_source.enabled and not configured_source.allow_extraction
+    assert configured_source.access_status == "rss_only"
     event, _, _, requested = await prepare(db, sessions, configured_source, monkeypatch)
     assert "https://animecorner.me/news/fixture/" in requested
     assert event.status == "READY_FOR_REVIEW"
@@ -495,7 +496,7 @@ def test_extraction_permission_migration_recovers_only_untouched_failures(
     assert event.translations[0].manual_edit == manual
 
 
-async def test_cover_is_visible_without_inline_media_permission(
+async def test_cover_is_hidden_without_inline_media_permission(
     db, sessions, configured_source, monkeypatch, admin, client
 ):
     from test_web import login
@@ -507,7 +508,8 @@ async def test_cover_is_visible_without_inline_media_permission(
     login(client)
     page = client.get(f"/admin/events/{event.id}/preview/ru")
     cover = dom(page.text).select_one(".article-cover img")
-    assert cover and cover["src"] == event.articles[0].featured_image
+    assert cover is None
+    assert event.image_url is None
     assert not dom(page.text).select_one(".article-content img")
     event.image_url = "https://other.example/unverified.jpg"
-    assert "Featured image is not a verified source image" in readiness_errors(event)
+    assert "Featured image is not a permitted source image" in readiness_errors(event)
